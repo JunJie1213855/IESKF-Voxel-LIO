@@ -1,0 +1,91 @@
+# /home/ros/dataset/robosense/mapping 数据集配置。
+# 实测 IMU 加速度单位为 g；静止噪声约 0.15–0.25 m/s²。
+/**:
+  ros__parameters:
+    common:
+      lidar_topic: /rslidar_points
+      imu_topic: /rslidar_imu_data
+      reliable_input: true  # bag 为 reliable；硬件 best-effort 发布时设 false
+      world_frame: odom
+      body_frame: imu_link
+      lidar_frame: lidar_link
+      # 校正后 LiDAR 时间 = 原 LiDAR 时间 + 偏移。
+      lidar_time_offset_sec: 0.0
+
+    preprocess:
+      lidar_type: 1  # 1 RoboSense, 2 Ouster, 3 Velodyne, 4 Hesai, 5 Livox PointCloud2
+      min_range: 0.5                 # m
+      max_range: 150.0               # m
+      point_stride: 3
+      scan_voxel_size: 0.5           # m，去畸变后降采样
+      time_unit: seconds             # seconds/milliseconds/microseconds/nanoseconds
+      time_reference: absolute       # absolute/relative
+      header_stamp_reference: scan_start  # scan_start/scan_end，仅 relative 使用
+
+    imu:
+      gravity_magnitude: 9.81        # m/s²
+      gravity_direction: [0.0, 0.0, -1.0]
+      init_duration_sec: 1.0
+      init_min_samples: 100
+      init_max_gyro_std: 0.02        # rad/s，每轴
+      init_max_accel_std: 0.4        # m/s²，每轴
+      init_max_gyro_mean: 0.1        # rad/s，向量模长
+      accel_scale: 9.81              # 输入乘此值后为 m/s²
+      max_gap_sec: 0.05
+      # 连续时间噪声密度/随机游走标准差，不是方差。
+      gyro_noise_density: 0.01       # rad/s/sqrt(Hz)
+      accel_noise_density: 0.1       # m/s²/sqrt(Hz)
+      gyro_bias_random_walk: 0.0001  # (rad/s)/sqrt(s)
+      accel_bias_random_walk: 0.001  # (m/s²)/sqrt(s)
+
+    extrinsic:
+      estimate: false
+      translation: [0.0, 0.0, 0.0]   # m，LiDAR 原点在 IMU 系的位置
+      # LiDAR -> IMU，来自已有 Airy 配置，接入时需核实。
+      rotation: [0.0, -1.0, 0.0,
+                 -1.0, 0.0, 0.0,
+                  0.0, 0.0, -1.0]
+
+    ieskf:
+      max_iterations: 4
+      rotation_convergence_rad: 0.001
+      translation_convergence_m: 0.001
+      min_effective_points: 30
+      rematch_each_iteration: true
+      measurement_model: constant   # constant/probabilistic
+      plane_residual_std: 0.1        # m，constant 使用
+      lidar_range_std: 0.04          # m，probabilistic 使用
+      lidar_angle_std_deg: 0.1       # degree，probabilistic 使用
+      residual_sigma_gate: 3.0       # probabilistic 使用
+      min_residual_std: 0.01         # m，观测标准差下限
+      max_plane_distance: 0.3        # m，两种模式均使用
+
+    voxel_map:
+      root_voxel_size: 3.0           # m
+      max_layer: 3                   # 根层为 0
+      min_points_per_layer: [10, 10, 8, 5]
+      plane_max_min_eigenvalue: 0.01 # m²
+      plane_max_eigenvalue_ratio: 0.1 # lambda_min / lambda_middle
+      max_points_per_node: 100
+      max_cov_points_per_node: 100
+      neighbor_voxel_radius: 1       # 根体素索引搜索半径
+      local_map_radius: 100.0        # m
+      max_root_voxels: 100000
+
+    buffers:
+      max_imu_samples: 4000
+      max_lidar_scans: 20
+
+    publish:
+      odometry: true
+      tf: true
+      path: true
+      max_path_poses: 10000
+      deskewed_cloud: true
+      world_cloud: true
+      voxel_planes: true
+      map_period_sec: 2.0
+      # 法向量协方差迹的固定着色范围 [0, 0.25]，小为蓝、大为红。
+      plane_color_max_normal_cov_trace: 0.25
+      plane_color_gamma: 0.2  # 小于 1 时增强低方差的颜色区分
+      diagnostics: true

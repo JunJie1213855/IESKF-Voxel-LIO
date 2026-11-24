@@ -1,0 +1,25 @@
+<?xml version="1.0"?>
+<package format="3">
+  <name>ieskf_voxel_lio</name>
+  <version>0.1.0</version>
+  <description>Explicit float32 IESKF and adaptive voxel plane LiDAR inertial odometry.</description>
+  <maintainer email="maintainer@example.com">LIO Maintainers</maintainer>
+  <license>BSD-3-Clause</license>
+  <buildtool_depend>ament_cmake</buildtool_depend>
+  <depend>eigen</depend>
+  <depend>libpcl-all-dev</depend>
+  <depend>rclcpp</depend>
+  <depend>sensor_msgs</depend>
+  <depend>nav_msgs</depend>
+  <depend>geometry_msgs</depend>
+  <depend>diagnostic_msgs</depend>
+  <depend>visualization_msgs</depend>
+  <depend>tf2_ros</depend>
+  <depend>livox_ros_driver2</depend>
+  <exec_depend>launch_ros</exec_depend>
+  <exec_depend>rviz2</exec_depend>
+  <exec_depend>rviz_default_plugins</exec_depend>
+  <exec_depend>ament_index_python</exec_depend>
+  <test_depend>gtest</test_depend>
+  <export><build_type>ament_cmake</build_type></export>
+</package>

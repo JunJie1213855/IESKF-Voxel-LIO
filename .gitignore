@@ -1,0 +1,29 @@
+# ROS 2 / colcon 和 CMake 构建产物
+/build/
+/install/
+/log/
+CMakeFiles/
+CMakeCache.txt
+cmake_install.cmake
+compile_commands.json
+CTestTestfile.cmake
+Testing/
+
+# 评估与生成的数据
+/test_results/
+*.bag
+*.db3
+*.mcap
+
+# Python 缓存
+__pycache__/
+*.py[cod]
+.pytest_cache/
+
+# 编辑器和系统文件
+.vscode/
+.idea/
+*.swp
+*.swo
+*~
+.DS_Store
